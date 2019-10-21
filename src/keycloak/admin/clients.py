@@ -27,11 +27,21 @@ class Clients(KeycloakAdminBase):
 class Client(KeycloakAdminBase):
     _id = None
     _realm_name = None
+    _paths = {
+        'client_secret': '/auth/admin/realms/{realm}/clients/{id}/client-secret'
+    }
 
     def __init__(self, realm_name, id, *args, **kwargs):
         self._id = id
         self._realm_name = realm_name
         super(Client, self).__init__(*args, **kwargs)
+
+    def client_secret(self):
+        return self._client.get(
+            self._client.get_full_url(
+                self.get_path('client_secret', realm=self._realm_name, id=self._id)
+            )
+        )
 
     @property
     def roles(self):
